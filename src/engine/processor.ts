@@ -1,4 +1,5 @@
 import { stemmer } from "stemmer";
+import { Vector } from "./model";
 
 export class Processor {
 
@@ -18,12 +19,12 @@ export class Processor {
         return vocabulary;
     }
 
-    public static getVector(words: string[], vocabulary: Set<string>): number[] {
+    public static getVector(words: string[], vocabulary: Set<string>): Vector<number> {
         const frequencyTable: { [key: string]: number } = {};
         Array.from(vocabulary).sort((w1, w2) => w1.localeCompare(w2)).forEach((word: string) => frequencyTable[word] = 0);
         words.forEach((word: string) => frequencyTable[word] = frequencyTable[word] + 1);
         
-        const vector = [];
+        const vector: Vector<number> = [];
         const frequencies = Object.keys(frequencyTable).sort((w1, w2) => w1.localeCompare(w2));
         
         for (const key in frequencies) {

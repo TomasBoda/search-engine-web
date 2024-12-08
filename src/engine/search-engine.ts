@@ -44,7 +44,6 @@ export class SearchEngine {
         this.dictionary = this.generateDictionary();
 
         await this.generateFrequencyTables();
-        
         await this.generateDocumentVectors();
 
         this.invertedIndexMap = this.generateInvertedIndexMap();

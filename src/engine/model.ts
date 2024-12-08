@@ -7,5 +7,7 @@ export type InvertedIndexMap = {
 
 export type RelevancyMap = {
     index: number;
-    relevancy: number
+    relevancy: number;
 };
+
+export type Vector<T> = T[];

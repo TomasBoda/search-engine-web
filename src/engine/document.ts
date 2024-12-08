@@ -1,4 +1,4 @@
-import { Dictionary } from "./model";
+import { Dictionary, Vector } from "./model";
 
 export class Document {
 
@@ -11,7 +11,7 @@ export class Document {
 
     public words: string[] = [];
     public frequencies: { [key: string]: number } = {};
-    public vector: number[] = [];
+    public vector: Vector<number> = [];
 
     constructor(id: number, label: number, content: string) {
         this.id = id;
