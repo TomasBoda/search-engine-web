@@ -10,8 +10,6 @@ export class SearchEngine {
     private dictionary: Dictionary = [];
     private invertedIndexMap: InvertedIndexMap = {};
 
-    constructor() {}
-
     public isLoaded(): boolean {
         return this.documents.length > 0;
     }

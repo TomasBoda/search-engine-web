@@ -54,7 +54,7 @@ export function SearchScreen({ documents }: { documents: DocumentObject[]; }) {
                         <DocumentList>
                             {documents.map((document: DocumentObject) =>
                                 <DocumentContainer href={"/documents/" + document.id}>
-                                    <DocumentTitle>({document.id}) {getDocumentTitle(document)}</DocumentTitle>
+                                    <DocumentTitle>{getDocumentTitle(document)}</DocumentTitle>
                                     <DocumentDescription>{getDocumentDescription(document)}</DocumentDescription>
                                 </DocumentContainer>
                             )}

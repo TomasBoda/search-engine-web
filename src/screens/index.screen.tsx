@@ -36,6 +36,16 @@ export function IndexScreen() {
                         {loading ? "Loading..." : "Search"}
                         </Component.Button>
                     </Form>
+
+                    <Info>
+                        <Item href="https://github.com/TomasBoda/search-engine-web" target="_blank">
+                            GitHub
+                        </Item>
+
+                        <Item href="https://github.com/TomasBoda/search-engine-web/blob/main/README.md" target="_blank">
+                            Documentation
+                        </Item>
+                    </Info>
                 </Content>
             </IndexPageContent>
         </IndexPageContainer>
@@ -80,6 +90,25 @@ const Form = styled.div`
     align-items: center;
 `;
 
-const Message = styled.div`
+const Info = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    
+    margin-top: 30px;
+`;
+
+const Item = styled(Link)`
     color: var(--c-white);
+    font-size: 12px;
+    font-weight: 400;
+    text-decoration: none;
+
+    cursor: pointer;
+    opacity: 0.7;
+
+    &:hover {
+        text-decoration: underline;
+    }
 `;

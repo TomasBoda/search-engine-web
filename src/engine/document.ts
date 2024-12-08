@@ -1,4 +1,4 @@
-import { Dictionary } from "./search-engine";
+import { Dictionary } from "./model";
 
 export class Document {
 
