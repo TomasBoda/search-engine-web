@@ -42,6 +42,7 @@ export function SearchScreen({ documents }: { documents: DocumentObject[]; }) {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" ? goToSearch() : {}}
                             placeholder="Type in your search query..."
                         />
 
