@@ -22,10 +22,14 @@ export default function SearchPage({ documents }: { documents: DocumentObject[];
   );
 }
 
-export async function getServerSideProps({ req, res, query }) {
+export async function getServerSideProps({ req, res, query, resolvedUrl }) {
+  const protocol = req.headers["x-forwarded-proto"] || (req.connection.encrypted ? "https" : "http");
+  const host = req.headers.host;
+  const currentUrl = `${protocol}://${host}${req.url}`;
+
   if (!searchEngine.isLoaded()) {
-    await searchEngine.loadCsvDataset("http://localhost:3000/dataset.csv");
-    await searchEngine.processDocuments(); 
+      await searchEngine.loadCsvDataset(currentUrl + "dataset.csv");
+      await searchEngine.processDocuments(); 
   }
 
   const documents: Document[] = searchEngine.search(query.query, 5);
