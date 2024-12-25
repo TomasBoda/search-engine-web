@@ -1,5 +1,3 @@
-import { IndexScreen } from "@/screens/index.screen";
-import { SearchScreen } from "@/screens/search.screen";
 import Head from "next/head";
 import { searchEngine } from "../_app";
 import { Document } from "@/engine/document";
@@ -25,7 +23,7 @@ export async function getServerSideProps({ req, res, params }) {
 
   if (!searchEngine.isLoaded()) {
       await searchEngine.loadCsvDataset(currentUrl + "dataset.csv");
-      await searchEngine.processDocuments(); 
+      searchEngine.processDocuments(); 
   }
 
   const documents: Document[] = searchEngine.getDocuments();

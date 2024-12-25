@@ -17,7 +17,9 @@ export function DocumentScreen({ document }: { document: DocumentObject; }) {
             <Page.Content>
                 <Content>
                     <Title>{getDocumentTitle()}</Title>
-                    <Text dangerouslySetInnerHTML={{ __html: getDocumentHtml() }} />
+                    <Text dangerouslySetInnerHTML={{
+                        __html: getDocumentHtml()
+                    }} />
                 </Content>
             </Page.Content>
         </Page.Container>

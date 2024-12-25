@@ -21,7 +21,7 @@ export async function getServerSideProps({ req, res }) {
 
   if (!searchEngine.isLoaded()) {
       await searchEngine.loadCsvDataset(currentUrl + "dataset.csv");
-      await searchEngine.processDocuments(); 
+      searchEngine.processDocuments(); 
   }
  
   return { props: {} }
