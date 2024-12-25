@@ -6,7 +6,6 @@ import { Document } from "@/engine/document";
 
 export interface DocumentObject {
   id: number;
-  label: number;
   content: string;
 }
 
@@ -35,7 +34,6 @@ export async function getServerSideProps({ req, res, query, resolvedUrl }) {
   const documents: Document[] = searchEngine.search(query.query, 5);
   const documentData: DocumentObject[] = documents.map(document => ({
     id: document.id,
-    label: document.label,
     content: document.content
   }));
  

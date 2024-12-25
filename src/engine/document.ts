@@ -1,21 +1,17 @@
-import { Dictionary, Vector } from "./model";
+import { Vector } from "./math";
+import { DocumentID, FrequencyMap, Term } from "./model";
 
 export class Document {
 
-    public id: number;
-
-    public label: number;
+    public id: DocumentID;
     public content: string;
 
-    public dictionary: Dictionary = [];
-
-    public words: string[] = [];
-    public frequencies: { [key: string]: number } = {};
+    public terms: Term[] = [];
+    public frequencyMap: FrequencyMap = {};
     public vector: Vector<number> = [];
 
-    constructor(id: number, label: number, content: string) {
+    constructor(id: DocumentID, content: string) {
         this.id = id;
-        this.label = label;
         this.content = content;
     }
 }

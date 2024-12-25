@@ -33,7 +33,6 @@ export async function getServerSideProps({ req, res, params }) {
 
   const parsed: DocumentObject = {
     id: document.id,
-    label: document.label,
     content: document.content
   };
  

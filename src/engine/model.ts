@@ -1,13 +1,19 @@
 
-export type Dictionary = string[];
+export type DocumentID = number;
+
+export type Term = string;
+
+export type Dictionary = Term[];
+
+export type FrequencyMap = {
+    [key: Term]: number;
+}
 
 export type InvertedIndexMap = {
-    [key: string]: number[]
+    [key: Term]: DocumentID[];
 };
 
 export type RelevancyMap = {
-    index: number;
+    id: DocumentID;
     relevancy: number;
 };
-
-export type Vector<T> = T[];
