@@ -26,7 +26,8 @@ export async function getServerSideProps({ req, res, query, resolvedUrl }) {
   const currentUrl = `${protocol}://${host}${req.url}`;
 
   if (!searchEngine.isLoaded()) {
-      await searchEngine.loadCsvDataset(currentUrl + "dataset.csv");
+      //await searchEngine.loadCsvDataset(currentUrl + "dataset.csv");
+      await searchEngine.loadCsvDataset("https://synergyagency.sk/assets/dataset.csv");
       searchEngine.processDocuments(); 
   }
 
