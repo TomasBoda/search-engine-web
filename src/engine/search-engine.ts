@@ -141,15 +141,15 @@ export class SearchEngine {
     }
 
     private generateDictionary(): void {
-        const termSet = new Set<string>();
+        const terms = new Set<string>();
 
         this.documents.forEach((document: Document) => {
             document.terms.forEach((term: Term) => {
-                termSet.add(term);
+                terms.add(term);
             });
         });
 
-        const dictionary: Dictionary = Array.from(termSet);
+        const dictionary: Dictionary = Array.from(terms);
         dictionary.sort((term1: Term, term2: Term) => term1.localeCompare(term2));
         
         this.dictionary = dictionary;
