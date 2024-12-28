@@ -3,8 +3,24 @@ import { searchEngine } from "../_app";
 import { Document } from "@/engine/document";
 import { DocumentObject } from "../search";
 import { DocumentScreen } from "@/screens/document.screen";
+import { useEffect, useState } from "react";
 
-export default function DocumentPage({ document }: { document: DocumentObject; }) {
+export default function DocumentPage({ id }: { id: number; }) {
+
+  const [document, setDocument] = useState<DocumentObject | undefined>(undefined);
+
+  useEffect(() => {
+    const documents: Document[] = searchEngine.getDocuments();
+    const doc: Document = documents.find(document => document.id === id);
+
+    const parsed: DocumentObject = {
+      id: doc.id,
+      content: doc.content
+    };
+
+    setDocument(parsed);
+  }, []);
+
   return (
     <>
       <Head>
@@ -16,24 +32,6 @@ export default function DocumentPage({ document }: { document: DocumentObject; }
   );
 }
 
-export async function getServerSideProps({ req, res, params }) {
-  const protocol = req.headers["x-forwarded-proto"] || (req.connection.encrypted ? "https" : "http");
-  const host = req.headers.host;
-  const currentUrl = `${protocol}://${host}${req.url}`;
-
-  if (!searchEngine.isLoaded()) {
-      //await searchEngine.loadCsvDataset(currentUrl + "dataset.csv");
-      await searchEngine.loadCsvDataset("https://synergyagency.sk/assets/dataset.csv");
-      searchEngine.processDocuments(); 
-  }
-
-  const documents: Document[] = searchEngine.getDocuments();
-  const document: Document = documents.find(document => document.id === parseInt(params.id));
-
-  const parsed: DocumentObject = {
-    id: document.id,
-    content: document.content
-  };
- 
-  return { props: { document: parsed } }
+export async function getServerSideProps({ params }) {
+  return { props: { id: parseInt(params.id) } }
 }

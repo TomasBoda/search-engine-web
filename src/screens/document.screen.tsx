@@ -2,7 +2,7 @@ import { Page } from "@/styles/styles";
 import styled from "styled-components";
 import { DocumentObject } from "@/pages/search";
 
-export function DocumentScreen({ document }: { document: DocumentObject; }) {
+export function DocumentScreen({ document }: { document?: DocumentObject; }) {
 
     function getDocumentTitle(): string {
         return document.content.split("\n")[0].trim();
@@ -10,6 +10,10 @@ export function DocumentScreen({ document }: { document: DocumentObject; }) {
 
     function getDocumentHtml(): string {
         return document.content.split("\n").slice(2).join("<br />");
+    }
+
+    if (!document) {
+        return null;
     }
 
     return (

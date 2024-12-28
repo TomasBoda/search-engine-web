@@ -2,13 +2,33 @@ import { SearchScreen } from "@/screens/search.screen";
 import Head from "next/head";
 import { searchEngine } from "./_app";
 import { Document } from "@/engine/document";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 export interface DocumentObject {
   id: number;
   content: string;
 }
 
-export default function SearchPage({ documents }: { documents: DocumentObject[]; }) {
+export default function SearchPage() {
+
+  const router = useRouter();
+  const params = useSearchParams();
+
+  const [documents, setDocuments] = useState<DocumentObject[]>([]);
+
+  useEffect(() => {
+    const query = params.get("query") ?? "";
+
+    const documentData: DocumentObject[] = searchEngine.search(query, 5).map(document => ({
+      id: document.id,
+      content: document.content
+    }));
+
+    setDocuments(documentData);
+  }, [router]);
+
   return (
     <>
       <Head>
@@ -18,24 +38,4 @@ export default function SearchPage({ documents }: { documents: DocumentObject[];
       <SearchScreen documents={documents} />
     </>
   );
-}
-
-export async function getServerSideProps({ req, res, query, resolvedUrl }) {
-  const protocol = req.headers["x-forwarded-proto"] || (req.connection.encrypted ? "https" : "http");
-  const host = req.headers.host;
-  const currentUrl = `${protocol}://${host}${req.url}`;
-
-  if (!searchEngine.isLoaded()) {
-      //await searchEngine.loadCsvDataset(currentUrl + "dataset.csv");
-      await searchEngine.loadCsvDataset("https://synergyagency.sk/assets/dataset.csv");
-      searchEngine.processDocuments(); 
-  }
-
-  const documents: Document[] = searchEngine.search(query.query, 5);
-  const documentData: DocumentObject[] = documents.map(document => ({
-    id: document.id,
-    content: document.content
-  }));
- 
-  return { props: { documents: documentData } }
 }
