@@ -149,18 +149,18 @@ The web interface serves as a medium for the user to search in the dataset of do
 
 Upon first load of the web application, while the documents are being processed, a `loading` overlay is shown to the user. As soon as the documents are processed, the overlay is hidden and the user can use the search engine.
 
-![Screenshot 1](./screenshots/loading-overlay.png)
+<img src="./screenshots/loading-overlay.png" width="1000px" />
 
 The user can enter a search query to the search input field and click on the "Search" button.
 
-![Screenshot 2](./screenshots/landing-page.png)
+<img src="./screenshots/landing-page.png" width="1000px" />
 
 Upon clicking on the "Search" button, the relevant documents are shown to the user.
 
-![Screenshot 3](./screenshots/search-results.png)
+<img src="./screenshots/search-results.png" width="1000px" />
 
 After clicking on any of the displayed documents, the user is redirected to the document detail page where the full article is displayed.
 
-![Screenshot 4](./screenshots/document-detail.png)
+<img src="./screenshots/document-detail.png" width="1000px" />
 
 by [Tomas Boda](https://github.com/TomasBoda)
