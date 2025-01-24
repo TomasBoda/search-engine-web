@@ -5,11 +5,11 @@ import { DocumentObject } from "@/pages/search";
 export function DocumentScreen({ document }: { document?: DocumentObject; }) {
 
     function getDocumentTitle(): string {
-        return document.content.split("\n")[0].trim();
+        return document.text.split("\n")[0].trim();
     }
 
     function getDocumentHtml(): string {
-        return document.content.split("\n").slice(2).join("<br />");
+        return document.text.split("\n").slice(2).join("<br />");
     }
 
     if (!document) {

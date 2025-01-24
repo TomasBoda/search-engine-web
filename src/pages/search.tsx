@@ -1,14 +1,14 @@
 import { SearchScreen } from "@/screens/search.screen";
 import Head from "next/head";
 import { searchEngine } from "./_app";
-import { Document } from "@/engine/document";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
+import { DocumentID } from "@/engine/model";
 
 export interface DocumentObject {
-  id: number;
-  content: string;
+  id: DocumentID;
+  text: string;
 }
 
 export default function SearchPage() {
@@ -20,12 +20,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     const query = params.get("query") ?? "";
-
-    const documentData: DocumentObject[] = searchEngine.search(query, 5).map(document => ({
-      id: document.id,
-      content: document.content
-    }));
-
+    const documentData: DocumentObject[] = searchEngine.search(query, 5).map(({ id, text }) => ({ id, text }));
     setDocuments(documentData);
   }, [router]);
 

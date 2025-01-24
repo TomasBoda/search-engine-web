@@ -1,25 +1,18 @@
 import Head from "next/head";
 import { searchEngine } from "../_app";
-import { Document } from "@/engine/document";
 import { DocumentObject } from "../search";
 import { DocumentScreen } from "@/screens/document.screen";
 import { useEffect, useState } from "react";
+import { DocumentID } from "@/engine/model";
 
-export default function DocumentPage({ id }: { id: number; }) {
+export default function DocumentPage({ id }: { id: DocumentID; }) {
 
   const [document, setDocument] = useState<DocumentObject | undefined>(undefined);
 
   useEffect(() => {
-    const documents: Document[] = searchEngine.getDocuments();
-    const doc: Document = documents.find(document => document.id === id);
-
-    const parsed: DocumentObject = {
-      id: doc.id,
-      content: doc.content
-    };
-
-    setDocument(parsed);
-  }, []);
+    const { text } = searchEngine.getDocumentById(id);
+    setDocument({ id, text });
+  }, [id]);
 
   return (
     <>
@@ -33,5 +26,5 @@ export default function DocumentPage({ id }: { id: number; }) {
 }
 
 export async function getServerSideProps({ params }) {
-  return { props: { id: parseInt(params.id) } }
+  return { props: { id: params.id } }
 }

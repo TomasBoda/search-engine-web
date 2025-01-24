@@ -24,11 +24,11 @@ export function SearchScreen({ documents }: { documents: DocumentObject[]; }) {
     }
 
     function getDocumentTitle(document: DocumentObject): string {
-        return document.content.split("\n")[0].trim();
+        return document.text.split("\n")[0].trim();
     }
 
     function getDocumentDescription(document: DocumentObject): string {
-        return document.content.split("\n").filter(line => line.trim() !== "").slice(1, 3).join(" ");
+        return document.text.split("\n").filter(line => line.trim() !== "").slice(1, 3).join(" ");
     }
 
     return (

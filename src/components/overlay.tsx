@@ -1,6 +1,16 @@
+import { useEffect } from "react";
 import styled from "styled-components"
+import { hideTransition, showTransition } from "./transition";
 
 export function Overlay({ showing }: { showing: boolean; }) {
+
+    useEffect(() => {
+        if (showing) {
+            showTransition();
+        } else {
+            hideTransition();
+        }
+    }, [showing]);
 
     if (!showing) {
         return null;
@@ -26,7 +36,7 @@ const Container = styled.div`
     justify-content: center;
 
     background-color: black;
-    z-index: 999;
+    z-index: 199;
 `;
 
 const Text = styled.div`
