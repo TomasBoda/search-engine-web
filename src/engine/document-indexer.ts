@@ -1,21 +1,10 @@
-import { Dictionary, DocumentID, InvertedIndexMap, ProcessedDocument, Term, TermFreqMap } from "./model";
+import { Dictionary, DocumentID, ProcessedDocument, Term, DocumentIndexerModule } from "./lib";
 
-export class DocumentIndexer {
-
-    private invertedIndexMap: InvertedIndexMap = {};
-    private termDocumentFreqMap: TermFreqMap = {};
+export class DocumentIndexer extends DocumentIndexerModule {
 
     public buildIndex(dictionary: Dictionary, documents: ProcessedDocument[]): void {
         this.buildTermDocumentFreqs(dictionary, documents);
         this.buildInvertedIndex(dictionary, documents);
-    }
-
-    public getIndexedTerm(term: Term): number {
-        return this.termDocumentFreqMap[term];
-    }
-
-    public getInvertedIndex(term: Term): DocumentID[] {
-        return this.invertedIndexMap[term];
     }
 
     private buildTermDocumentFreqs(dictionary: Dictionary, documents: ProcessedDocument[]): void {

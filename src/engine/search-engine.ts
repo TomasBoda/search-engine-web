@@ -3,23 +3,19 @@ import { DocumentProcessor } from "./document-processor";
 import { stemmer } from "stemmer";
 import { DocumentIndexer } from "./document-indexer";
 import { DocumentMath } from "./math";
-import { DatasetDocument, Dictionary, DocumentDistance, DocumentID, ProcessedDocument, Term } from "./model";
+import { DatasetDocument, DocumentDistance } from "./model";
+import { SearchEngineModule, DocumentID, ProcessedDocument, Term } from "./lib";
 
-export class SearchEngine {
-
-    private documentProcessor: DocumentProcessor;
-    private documentIndexer: DocumentIndexer;
-
-    private dictionary: Dictionary = [];
-    private documents: Map<DocumentID, ProcessedDocument> = new Map();
+export class SearchEngine extends SearchEngineModule {
 
     constructor() {
-        this.documentProcessor = new DocumentProcessor(stemmer);
-        this.documentIndexer = new DocumentIndexer();
+        const documentProcessor = new DocumentProcessor(stemmer);
+        const documentIndexer = new DocumentIndexer();
+        super(documentProcessor, documentIndexer);
     }
 
     public async initialize(filename: string) {
-        const documents: DatasetDocument[] = await this.loadCsvDataset(filename);
+        const documents: DatasetDocument[] = await this.loadDataset(filename);
 
         const termSet: Set<Term> = new Set();
 
@@ -105,7 +101,7 @@ export class SearchEngine {
         return document;
     }
 
-    private async loadCsvDataset(filename: string): Promise<DatasetDocument[]> {
+    private async loadDataset(filename: string): Promise<DatasetDocument[]> {
         const documents: DatasetDocument[] = [];
 
         const response = await fetch(filename);

@@ -1,11 +1,12 @@
 import uuid4 from "uuid4";
-import { DocumentID, ProcessedDocument, Term, TermFreqMap } from "./model";
+import { DocumentID, ProcessedDocument, Term, TermFreqMap, DocumentProcessorModule } from "./lib";
 
-export class DocumentProcessor {
+export class DocumentProcessor extends DocumentProcessorModule {
 
     private stemmer: (term: string) => string;
-    
+
     constructor(stemmer: (term: string) => string) {
+        super();
         this.stemmer = stemmer;
     }
 
