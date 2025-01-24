@@ -82,7 +82,7 @@ function buildTermDocumentFreqs(dictionary: Dictionary, documents: ProcessedDocu
 ```
 
 #### 5. Inverted index
-In the last step, we generate an inverted index map - a data structure that will improve the performance of searching. The data structure of the inverted index is a hash map that contains keys for each term from the dictionary. Each key's value is an array of document IDs which are relevant for that term - documents that contain the given term. In this way, upon inputing a search query, we can retrieve documents that contain terms present in the search query and rank these documents only, omitting the vast majority of documents not relevant to our search query.
+In this step, we generate an inverted index map - a data structure that will improve the performance of searching. The data structure of the inverted index is a hash map that contains keys for each term from the dictionary. Each key's value is an array of document IDs which are relevant for that term - documents that contain the given term. In this way, upon inputing a search query, we can retrieve documents that contain terms present in the search query and rank these documents only, omitting the vast majority of documents not relevant to our search query.
 
 ```ts
 function buildInvertedIndex(dictionary: Dictionary, documents: ProcessedDocument[]): void {
@@ -149,7 +149,7 @@ queryDocument.terms.forEach((term: Term) => {
 ```
 
 #### 3. Ranking
-In this step, we calculate the distance of the query document to each relevant document found in the previous step. For this, we use the cosine similarity functions. After the distances have been calculated, we sort the relevant documents by their distances to the query document. The smaller the distance is, the more relevant the document is. Finally, we return the first `n` documents to the user. These documents are the most relevant documents to the user's input search query.
+In this step, we calculate the distance of the query document to each relevant document found in the previous step. For this, we use the cosine similarity functions. After the distances have been calculated, we sort the relevant documents by their distances to the query document. The smaller the distance is, the more relevant the document is. Finally, we return the first `count` documents to the user. These documents are the most relevant documents to the user's input search query.
 
 ```ts
 const distances: DocumentDistance[] = relevantDocuments.map((document: ProcessedDocument) => ({
