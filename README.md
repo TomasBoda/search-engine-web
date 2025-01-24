@@ -12,12 +12,12 @@ The dataset is taken from [Kaggle](https://www.kaggle.com/datasets/sunilthite/te
 
 ### Preprocessing
 The relevancy ranking mechanism of the search engine is a vector model based on the bag-of-features model. In the document preprocessing phase, the documents are scanned and vectorized. This process contains of several stages:
-1. processing of terms
-2. generation of term frequency maps
-3. generation of dictionary
-4. generation of term-document frequency map
-5. generation of the inverted index map
-6. generation of document vectors
+1. [processing of terms](#1-term-processing)
+2. [generation of term frequency maps](#2-term-frequencies)
+3. [generation of dictionary](#3-dictionary)
+4. [generation of term-document frequency map](#4-term-document-frequencies)
+5. [generation of the inverted index map](#5-inverted-index)
+6. [generation of document vectors](#6-vectorizing-documents)
 
 #### 1. Term processing
 In this stage, the text content of each document is split into terms (words) and the indiviual terms are processed and transformed. This step involves:
@@ -128,9 +128,9 @@ processedDocuments.forEach((document: ProcessedDocument) => {
 
 ### Searching
 After the preprocessing phase, the search engine is ready to process the search query and return relevant documents. When the user enter a search query and initiates the search, the following happens:
-1. generation of the query document
-2. retrieval of relevant documents
-4. ranking the documents
+1. [generation of the query document](#1-query-document)
+2. [retrieval of relevant documents](#2-relevant-documents)
+4. [ranking the documents](#3-ranking)
 
 #### 1. Query document
 After the user has entered a search query and initiated the search, a document is created from the input query string. This document is processed in the same way as the documents from the dataset and is finally vectorized to the shared vector space.
