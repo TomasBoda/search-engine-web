@@ -13,11 +13,11 @@ The dataset is taken from [Kaggle](https://www.kaggle.com/datasets/sunilthite/te
 ### Preprocessing
 The relevancy ranking mechanism of the search engine is a vector model based on the bag-of-features model. In the document preprocessing phase, the documents are scanned and vectorized. This process contains of several stages:
 1. processing of terms
-2. generation of dictionary
-3. generation of term frequency maps
+2. generation of term frequency maps
+3. generation of dictionary
 4. generation of term-document frequency map
-5. generation of document vectors
-6. generation of the inverted index map
+5. generation of the inverted index map
+6. generation of document vectors
 
 #### 1. Term processing
 In this stage, the text content of each document is split into terms (words) and the indiviual terms are processed and transformed. This step involves:
@@ -29,45 +29,80 @@ In this stage, the text content of each document is split into terms (words) and
 
 The most important step is term stemming, which transforms the term into its stem form. For instance, the term "unconditionally" becomes "condition". This step helps minimizing the volume of the dictionary, putting terms with the same stem into the same class.
 
-#### 2. Dictionary
-After all the documents and their terms have been processed, the search engine generates the dictionary. Dictionary is a vector of all terms present in all documents, that's dimension determines the dimension of the vector space in which we are going to operate. In order to generate the dictionary, we traverse all terms of all documents and add them to a set of terms. Finally, we transform the set into a vector (array) and sort it in lexicographic order.
-
-```ts
-function generateDictionary(): void {
-    const terms = new Set<string>();
-
-    this.documents.forEach((document: Document) => {
-        document.terms.forEach((term: Term) => {
-            terms.add(term);
-        });
-    });
-
-    const dictionary: Dictionary = Array.from(terms);
-    dictionary.sort((term1: Term, term2: Term) => term1.localeCompare(term2));
-    
-    this.dictionary = dictionary;
-}
-```
-
-#### 3. Term frequencies
+#### 2. Term frequencies
 Each document stores a frequency map. It represents the number of occurences of each term in the document. The more occurences a term has in the document, the more significant the term is. These frequencies will be helpful in later steps.
 
 ```ts
-function generateFrequencyMaps(): void {
-    this.documents.forEach((document: Document) => {
-        document.terms.forEach((term: Term) => {
-            const frequencies: number | undefined = document.frequencyMap[term];
-            const newFrequencies: number = frequencies === undefined ? 1 : frequencies + 1;
-            document.frequencyMap[term] = newFrequencies;
-        });
-    });
+function processDocument(text: string): ProcessedDocument {
+    const id: DocumentID = uuid4();
+    const terms: Term[] = this.processTerms(text);
+    const freqs: TermFreqMap = {};
+
+    for (const term of terms) {
+        const freq: number = freqs[term] === undefined ? 1 : freqs[term] + 1;
+        freqs[term] = freq;
+    }
+
+    return { id, text, terms, freqs, vector: [] };
 }
+```
+
+#### 3. Dictionary
+After all the documents and their terms have been processed, the search engine generates the dictionary. Dictionary is a vector of all terms present in all documents, that's dimension determines the dimension of the vector space in which we are going to operate. In order to generate the dictionary, we traverse all terms of all documents and add them to a set of terms. Finally, we transform the set into a vector (array) and sort it in lexicographic order.
+
+```ts
+const termSet: Set<Term> = new Set();
+
+const processedDocuments: ProcessedDocument[] = documents.map((document: DatasetDocument) => {
+    const processedDocument: ProcessedDocument = this.documentProcessor.processDocument(document.text);
+    processedDocument.terms.forEach((term: Term) => termsSet.add(term));
+    return processedDocument;
+});
+
+this.dictionary = Array.from(termSet);
 ```
 
 #### 4. Term-Document frequencies
 This is a helper step in which we create a hash map with keys representing terms and values representing the number of documents in which the term has occured at least once. This hash map will be helpful to us in generating the document vectors and weighing the vector elements.
 
-#### 5. Vectorizing documents
+```ts
+function buildTermDocumentFreqs(dictionary: Dictionary, documents: ProcessedDocument[]): void {
+    this.termDocumentFreqMap = {};
+
+    dictionary.forEach((term: Term) => {
+        this.termDocumentFreqMap[term] = 0;
+
+        documents.forEach((document: ProcessedDocument) => {
+            if (document.freqs[term] !== undefined) {
+                this.termDocumentFreqMap[term] = this.termDocumentFreqMap[term] + 1;
+            }
+        });
+    });
+}
+```
+
+#### 5. Inverted index
+In the last step, we generate an inverted index map - a data structure that will improve the performance of searching. The data structure of the inverted index is a hash map that contains keys for each term from the dictionary. Each key's value is an array of document IDs which are relevant for that term - documents that contain the given term. In this way, upon inputing a search query, we can retrieve documents that contain terms present in the search query and rank these documents only, omitting the vast majority of documents not relevant to our search query.
+
+```ts
+function buildInvertedIndex(dictionary: Dictionary, documents: ProcessedDocument[]): void {
+    this.invertedIndexMap = {};
+
+    dictionary.forEach((term: Term) => {
+        const relevantDocumentIds: DocumentID[] = [];
+
+        documents.forEach((document: ProcessedDocument) => {
+            if (document.freqs[term] !== undefined) {
+                relevantDocumentIds.push(document.id);
+            }
+        });
+
+        this.invertedIndexMap[term] = relevantDocumentIds;
+    });
+}
+```
+
+#### 6. Vectorizing documents
 This is the most important step in the preprocessing stage. For each document, we generate a vector, where the vectors of all documents are of the same dimension (the dimension of the dictionary). This is crucial for searching, since we are going to be calculating distances between vectors.
 
 First, we iterate through all documents. For each document, we iterate over all terms in the shared dictionary. If the current term is not present in the document, we put `0` to the document vector. Otherwise we calculate the weighted value of the term. To calculate the weighted value, we follow these steps:
@@ -79,46 +114,16 @@ First, we iterate through all documents. For each document, we iterate over all 
 In this way, we generate a vector for each documents, where each element of the vector corresponds to one term in the shared dictionary and its value is determined by the factors above. The more occurences of the term the document contains, the more important the term for the document is. However, the more documents contain the term, the less relevant the term becomes. After vectorizing the documents, we have transformed the textual representation of the documents to a mathematical representation in form of vectors.
 
 ```ts
-function generateDocumentVectors(): void {
-    this.documents.forEach((document: Document) => {
-        this.dictionary.forEach((term: Term) => {
-            const weight = this.getTermWeight(document, term);
-            document.vector.push(weight);
-        });
-    });
-}
-
-function getTermWeight(document: Document, term: string): number {
-    const tf = (document.frequencyMap[term] ?? 0) / document.terms.length;
-    const df = this.termDocumentFrequencyMap[term];
-    const idf = Math.log2(this.documents.length / (1 + df));
-    const tfidf = tf * idf;
-
-    return tfidf;
-}
-```
-
-#### 6. Inverted index
-In the last step, we generate an inverted index map - a data structure that will improve the performance of searching. The data structure of the inverted index is a hash map that contains keys for each term from the dictionary. Each key's value is an array of document IDs which are relevant for that term - documents that contain the given term. In this way, upon inputing a search query, we can retrieve documents that contain terms present in the search query and rank these documents only, omitting the vast majority of documents not relevant to our search query.
-
-```ts
-function generateInvertedIndexMap(): void {
-    const invertedIndexMap: InvertedIndexMap = {};
-
+processedDocuments.forEach((document: ProcessedDocument) => {
     this.dictionary.forEach((term: Term) => {
-        const relevantDocumentIds: DocumentID[] = [];
+        const tf = (document.freqs[term] ?? 0) / document.terms.length;
+        const df = this.documentIndexer.getIndexedTerm(term);
+        const idf = Math.log2(processedDocuments.length / (1 + df));
+        const tfidf = tf * idf;
 
-        this.documents.forEach((document: Document) => {
-            if (document.frequencyMap[term] !== undefined) {
-                relevantDocumentIds.push(document.id);
-            }
-        });
-
-        invertedIndexMap[term] = relevantDocumentIds;
+        document.vector.push(tfidf);
     });
-
-    this.invertedIndexMap = invertedIndexMap;
-}
+});
 ```
 
 ### Searching
@@ -133,16 +138,36 @@ After the user has entered a search query and initiated the search, a document i
 #### 2. Relevant documents
 Then, we use the inverted index map to retrieve documents that are relevant to our search query. More specifically, for each term of the search query, we retrieve documents containing this term.
 
+```ts
+const relevantDocumentIds: Set<DocumentID> = new Set();
+
+queryDocument.terms.forEach((term: Term) => {
+    this.documentIndexer.getInvertedIndex(term).forEach((id: DocumentID) => {
+        relevantDocumentIds.add(id);
+    })
+});
+```
+
 #### 3. Ranking
-In this step, we calculate the distance of the query document to each relevant document found in the previous step. For this, we use the cosine similarity functions.
+In this step, we calculate the distance of the query document to each relevant document found in the previous step. For this, we use the cosine similarity functions. After the distances have been calculated, we sort the relevant documents by their distances to the query document. The smaller the distance is, the more relevant the document is. Finally, we return the first `n` documents to the user. These documents are the most relevant documents to the user's input search query.
 
 ```ts
-function cosineSimilarity(vector1: Vector<number>, vector2: Vector<number>): number {
+const distances: DocumentDistance[] = relevantDocuments.map((document: ProcessedDocument) => ({
+    id: document.id,
+    distance: DocumentMath.cosineSimilarity(queryDocument.vector, document.vector),
+}));
+
+const results: DocumentDistance[] = distances
+    .filter(value => value.distance !== 0)
+    .sort((a, b) => b.distance - a.distance)
+    .slice(0, count);
+```
+
+```ts
+export function cosineSimilarity(vector1: Vector<number>, vector2: Vector<number>): number {
     return dotProduct(vector1, vector2) / (magnitude(vector1) * magnitude(vector2));
 }
 ```
-
-After the distances have been calculated, we sort the relevant documents by their distances to the query document. The smaller the distance is, the more relevant the document is. Finally, we return the first `n` documents to the user. These documents are the most relevant documents to the user's input search query.
 
 ## Web interface
 The web interface serves as a medium for the user to search in the dataset of documents.
