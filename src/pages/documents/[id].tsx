@@ -3,7 +3,7 @@ import { searchEngine } from "../_app";
 import { DocumentObject } from "../search";
 import { DocumentScreen } from "@/screens/document.screen";
 import { useEffect, useState } from "react";
-import { DocumentID } from "@/engine/lib";
+import { DocumentID } from "@/search-engine";
 
 export default function DocumentPage({ id }: { id: DocumentID; }) {
 

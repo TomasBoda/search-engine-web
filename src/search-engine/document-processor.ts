@@ -1,7 +1,8 @@
 import uuid4 from "uuid4";
-import { DocumentID, ProcessedDocument, Term, TermFreqMap, DocumentProcessorModule } from "./lib";
+import { DocumentID, Document, Term } from "./model";
+import { Processor } from "./library/processor";
 
-export class DocumentProcessor extends DocumentProcessorModule {
+export class DocumentProcessor extends Processor<Document> {
 
     private stemmer: (term: string) => string;
 
@@ -10,11 +11,12 @@ export class DocumentProcessor extends DocumentProcessorModule {
         this.stemmer = stemmer;
     }
 
-    public processDocument(text: string): ProcessedDocument {
+    public process(text: string): Document {
         const id: DocumentID = uuid4();
         const terms: Term[] = this.processTerms(text);
-        const freqs: TermFreqMap = {};
+        const freqs: { [key: Term]: number; } = {};
 
+        // build term frequencies
         for (const term of terms) {
             const freq: number = freqs[term] === undefined ? 1 : freqs[term] + 1;
             freqs[term] = freq;

@@ -4,9 +4,9 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
 import { Overlay } from "@/components/overlay";
-import { SearchEngine } from "@/engine/search-engine";
+import { DocumentSearchEngine } from "@/search-engine/document-search-engine";
 
-export const searchEngine: SearchEngine = new SearchEngine();
+export const searchEngine: DocumentSearchEngine = new DocumentSearchEngine();
 
 export default function App({ Component, pageProps }: AppProps) {
 
@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function init() {
       if (!searchEngine.isLoaded()) {
-        await searchEngine.initialize("/dataset.csv");
+        await searchEngine.process("/dataset.csv");
         setLoaded(true);
       }
     }

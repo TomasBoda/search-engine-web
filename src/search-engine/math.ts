@@ -1,4 +1,4 @@
-import { Vector } from "./lib";
+import { Vector } from "./model";
 
 export namespace DocumentMath {
     

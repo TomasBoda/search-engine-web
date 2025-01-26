@@ -4,7 +4,7 @@ import { searchEngine } from "./_app";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { DocumentID } from "@/engine/lib";
+import { DocumentID } from "@/search-engine";
 
 export interface DocumentObject {
   id: DocumentID;
